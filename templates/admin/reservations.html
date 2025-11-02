@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block title %}Reservations - Admin - Building Reservation System{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-calendar-check"></i> Manage Reservations</h2>
+    <div>
+        <div class="btn-group" role="group">
+            <a href="{{ url_for('admin_reservations', status='all') }}" 
+               class="btn {% if status_filter == 'all' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                All
+            </a>
+            <a href="{{ url_for('admin_reservations', status='pending') }}" 
+               class="btn {% if status_filter == 'pending' %}btn-warning{% else %}btn-outline-warning{% endif %}">
+                Pending
+            </a>
+            <a href="{{ url_for('admin_reservations', status='approved') }}" 
+               class="btn {% if status_filter == 'approved' %}btn-success{% else %}btn-outline-success{% endif %}">
+                Approved
+            </a>
+            <a href="{{ url_for('admin_reservations', status='rejected') }}" 
+               class="btn {% if status_filter == 'rejected' %}btn-danger{% else %}btn-outline-danger{% endif %}">
+                Rejected
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        {% if reservations %}
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Status</th>
+                            <th>Requestor</th>
+                            <th>Room</th>
+                            <th>Building</th>
+                            <th>Floor</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Requested At</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for reservation in reservations %}
+                        <tr>
+                            <td>{{ reservation.reservation_id }}</td>
+                            <td>
+                                {% if reservation.status == 'pending' %}
+                                    <span class="badge bg-warning">Pending</span>
+                                {% elif reservation.status == 'approved' %}
+                                    <span class="badge bg-success">Approved</span>
+                                {% elif reservation.status == 'rejected' %}
+                                    <span class="badge bg-danger">Rejected</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ reservation.reserved_by }}</td>
+                            <td>{{ reservation.room_num }}</td>
+                            <td>{{ reservation.building_name }}</td>
+                            <td>{{ reservation.floor }}</td>
+                            <td>{{ reservation.slot_date }}</td>
+                            <td>{{ reservation.slot_hour|time_range_12hr }}</td>
+                            <td>{{ reservation.reserved_at }}</td>
+                            <td>
+                                {% if reservation.status == 'pending' %}
+                                    <form method="POST" style="display: inline;" action="{{ url_for('approve_reservation', reservation_id=reservation.reservation_id) }}">
+                                        <button type="submit" class="btn btn-success btn-sm" onclick="return confirm('Approve this reservation?')">
+                                            <i class="fas fa-check"></i> Approve
+                                        </button>
+                                    </form>
+                                    <form method="POST" style="display: inline;" action="{{ url_for('reject_reservation', reservation_id=reservation.reservation_id) }}">
+                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Reject this reservation?')">
+                                            <i class="fas fa-times"></i> Reject
+                                        </button>
+                                    </form>
+                                {% elif reservation.status == 'approved' %}
+                                    <form method="POST" style="display: inline;" action="{{ url_for('cancel_reservation', reservation_id=reservation.reservation_id) }}">
+                                        <button type="submit" class="btn btn-warning btn-sm" onclick="return confirm('Release this reservation? This will free up the time slot.')">
+                                            <i class="fas fa-unlock"></i> Release
+                                        </button>
+                                    </form>
+                                {% else %}
+                                    <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="text-center text-muted py-5">
+                <i class="fas fa-calendar-times fa-3x mb-3"></i>
+                <h5>No Reservations Found</h5>
+                <p>
+                    {% if status_filter == 'all' %}
+                        No reservations have been made yet.
+                    {% else %}
+                        No {{ status_filter }} reservations found.
+                    {% endif %}
+                </p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

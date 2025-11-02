@@ -1,0 +1,223 @@
+{% extends "base.html" %}
+
+{% block title %}Recurring Reservations - Building Reservation System{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-repeat"></i> Recurring Reservations</h2>
+    <a class="btn btn-outline-secondary" href="{{ url_for('admin_dashboard') }}">
+        <i class="fas fa-arrow-left"></i> Back to Dashboard
+    </a>
+</div>
+
+<div class="alert alert-secondary" role="alert">
+    <div class="d-flex align-items-center">
+        <i class="fas fa-info-circle fa-lg me-3"></i>
+        <div>
+            <strong>Tip:</strong> Use a consistent label like <code>Weekly: Name</code> so you can adjust or remove the series later. Start dates automatically align to the next selected weekday.
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-5">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="fas fa-plus-circle"></i> Add Recurring Series</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('admin_recurring') }}">
+                    <div class="mb-3">
+                        <label class="form-label" for="reserved_by">Series Label</label>
+                        <input type="text" class="form-control" id="reserved_by" name="reserved_by" placeholder="Weekly: Counseling Group" required>
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-sm-6">
+                            <label class="form-label" for="building_id">Building</label>
+                            <select class="form-select" id="building_id" name="building_id" required>
+                                <option value="" selected disabled>Select building</option>
+                                {% for building in buildings %}
+                                    <option value="{{ building.building_id }}">{{ building.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label" for="room_id">Room</label>
+                            <select class="form-select" id="room_id" name="room_id" required>
+                                <option value="" data-placeholder="true">Select a building first</option>
+                                {% for room in rooms %}
+                                    <option value="{{ room.room_id }}" data-building="{{ room.building_id }}">
+                                        {{ room.building_name }} · Room {{ room.room_num }} (Floor {{ room.floor }})
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mt-1">
+                        <div class="col-sm-6">
+                            <label class="form-label" for="weekday">Weekday</label>
+                            <select class="form-select" id="weekday" name="weekday" required>
+                                {% for value, label in weekday_options %}
+                                    <option value="{{ value }}">{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label" for="start_date">Start On / After</label>
+                            <input type="date" class="form-control" id="start_date" name="start_date" value="{{ default_start_date }}">
+                            <div class="form-text">Automatically aligned to the next selected weekday.</div>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mt-1">
+                        <div class="col-sm-6">
+                            <label class="form-label" for="start_hour">Start Time</label>
+                            <select class="form-select" id="start_hour" name="start_hour" required>
+                                {% for hour in hour_choices %}
+                                    <option value="{{ hour }}">{{ hour|hour_to_12hr }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label" for="end_hour">End Time</label>
+                            <select class="form-select" id="end_hour" name="end_hour" required>
+                                {% for hour in end_hour_choices %}
+                                    <option value="{{ hour }}">{{ hour|hour_to_12hr }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mt-1">
+                        <div class="col-sm-6">
+                            <label class="form-label" for="weeks">Number of Weeks</label>
+                            <input type="number" class="form-control" id="weeks" name="weeks" min="1" max="52" value="8">
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label" for="status">Reservation Status</label>
+                            <select class="form-select" id="status" name="status">
+                                <option value="approved" selected>Approved</option>
+                                <option value="pending">Pending</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-save"></i> Create Series
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-7">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-light">
+                <h5 class="mb-0"><i class="fas fa-list"></i> Existing Recurring Series</h5>
+            </div>
+            <div class="card-body">
+                {% if recurring_series %}
+                    <div class="table-responsive">
+                        <table class="table table-striped align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Series</th>
+                                    <th>Location</th>
+                                    <th>Weekday</th>
+                                    <th>Time</th>
+                                    <th>Active Range</th>
+                                    <th>Status</th>
+                                    <th class="text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for series in recurring_series %}
+                                    <tr>
+                                        <td>{{ series.reserved_by }}</td>
+                                        <td>{{ series.building_name }} · Room {{ series.room_num }}</td>
+                                        <td>{{ series.weekday_name }}</td>
+                                        <td>
+                                            {{ series.start_hour|hour_to_12hr }}
+                                            {% if series.display_end_hour %}
+                                                – {{ series.display_end_hour|hour_to_12hr }}
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {{ series.first_date }} → {{ series.last_date }}<br>
+                                            <small class="text-muted">{{ series.total_slots }} slot(s)</small>
+                                        </td>
+                                        <td class="text-capitalize">{{ series.status }}</td>
+                                        <td class="text-center">
+                                            <form method="POST" action="{{ url_for('delete_recurring') }}" class="d-flex flex-column gap-2">
+                                                <input type="hidden" name="reserved_by" value="{{ series.reserved_by }}">
+                                                <input type="hidden" name="room_id" value="{{ series.room_id }}">
+                                                <input type="hidden" name="weekday" value="{{ series.sql_weekday }}">
+                                                <input type="hidden" name="status" value="{{ series.status }}">
+                                                <div class="input-group input-group-sm">
+                                                    <span class="input-group-text">From</span>
+                                                    <input type="date" name="from_date" class="form-control" value="{{ series.first_date }}">
+                                                </div>
+                                                <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Remove future slots for {{ series.reserved_by }} starting on the selected date?');">
+                                                    <i class="fas fa-trash-alt"></i> Remove Future Slots
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center text-muted py-5">
+                        <i class="fas fa-calendar-plus fa-3x mb-3"></i>
+                        <p class="mb-0">No recurring series detected yet. Use the form to create one.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+(function () {
+    const buildingSelect = document.getElementById('building_id');
+    const roomSelect = document.getElementById('room_id');
+    if (!buildingSelect || !roomSelect) {
+        return;
+    }
+
+    const placeholderOption = roomSelect.querySelector('option[data-placeholder="true"]');
+    const allRoomOptions = Array.from(roomSelect.options).filter(opt => !opt.dataset.placeholder);
+
+    function filterRooms() {
+        const selectedBuilding = buildingSelect.value;
+        roomSelect.innerHTML = '';
+        const placeholderClone = placeholderOption.cloneNode(true);
+        placeholderClone.selected = true;
+        roomSelect.appendChild(placeholderClone);
+
+        let hasMatch = false;
+        allRoomOptions.forEach(option => {
+            if (!selectedBuilding || option.dataset.building === selectedBuilding) {
+                roomSelect.appendChild(option.cloneNode(true));
+                hasMatch = true;
+            }
+        });
+
+        if (!hasMatch) {
+            placeholderClone.textContent = selectedBuilding ? 'No rooms for this building' : 'Select a building first';
+        }
+    }
+
+    buildingSelect.addEventListener('change', filterRooms);
+    filterRooms();
+})();
+</script>
+{% endblock %}

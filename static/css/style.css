@@ -1,0 +1,148 @@
+/* Custom styles for Building Reservation System */
+
+.navbar-brand {
+    font-weight: bold;
+}
+
+/* Custom navbar color */
+.navbar.bg-primary {
+    background-color: #8b9f6d !important;
+}
+
+.card {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    border: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+.card-header {
+    background-color: #8b9f6d;
+    color: #ffffff;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+.btn {
+    border-radius: 0.375rem;
+}
+
+.table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+}
+
+.badge {
+    font-size: 0.75em;
+}
+
+/* Loading spinner */
+.spinner-border {
+    width: 3rem;
+    height: 3rem;
+}
+
+/* Custom button styles */
+.btn-outline-primary:hover,
+.btn-outline-success:hover,
+.btn-outline-info:hover,
+.btn-outline-warning:hover,
+.btn-outline-danger:hover,
+.btn-outline-secondary:hover {
+    transform: translateY(-1px);
+}
+
+/* Card hover effects */
+.card:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    transition: box-shadow 0.15s ease-in-out;
+}
+
+/* Badge color overrides */
+.badge.bg-info {
+    background-color: #6c9bd1 !important;
+    color: #ffffff;
+}
+
+.badge.bg-primary {
+    background-color: #8b9f6d !important;
+    color: #ffffff;
+}
+
+.badge.bg-warning {
+    background-color: #ff6b35 !important;
+    color: #ffffff;
+    font-weight: 600;
+}
+
+/* Modal improvements */
+.modal-header {
+    background-color: #8b9f6d;
+    color: #ffffff;
+    border-bottom: 1px solid #dee2e6;
+}
+
+/* Alert improvements */
+.alert {
+    border-radius: 0.5rem;
+}
+
+/* Table responsive improvements */
+.table-responsive {
+    border-radius: 0.375rem;
+}
+
+/* Form improvements */
+.form-control:focus,
+.form-select:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* Navigation improvements */
+.navbar .nav-link {
+    color: #e8f0dc !important;
+    font-weight: 500;
+}
+
+.navbar .nav-link:hover {
+    color: #ffffff !important;
+}
+
+.navbar .navbar-brand {
+    color: #e8f0dc !important;
+    font-weight: 700;
+}
+
+/* Footer spacing */
+body {
+    padding-bottom: 2rem;
+}
+
+/* Quick action buttons */
+.btn-lg {
+    padding: 0.75rem 1.25rem;
+    font-size: 1rem;
+}
+
+/* Empty state styling */
+.text-muted {
+    color: #6c757d !important;
+}
+
+.text-muted .fas {
+    opacity: 0.5;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .btn-lg {
+        font-size: 0.9rem;
+        padding: 0.5rem 1rem;
+    }
+    
+    .table-responsive {
+        font-size: 0.875rem;
+    }
+}
