@@ -1,6 +1,52 @@
 # Building Reservation System
 
 A comprehensive web application for managing building and room reservations with both client-facing and administrative interfaces.
+Designed for a company with ~100-150 employees. Concurrency solved by manual approval on admin console. NOT designed for large-scale companies with a need for auto-reservation.
+
+## At a Glance
+
+### Tech Stack
+- **Backend**: Flask 3.0.3 (Python 3.12)
+- **Database**: SQLite with generated seed data
+- **Frontend**: HTML5, Bootstrap 5, custom CSS/JS
+- **Authentication**: Bcrypt password hashing, session-based admin login
+- **Deployment**: Azure App Service with Gunicorn & GitHub Actions CI/CD
+
+### Layout
+<h2>Main reservation landing page</h2>
+<img src="images/client-view.png">
+
+*****
+
+<h2>Admin dashboard / landing page</h2>
+<img src="images/dashboard-view.png">
+
+*****
+
+<h2>Building details</h2>
+<img src="images/building-view.png">
+
+*****
+
+<h2>Rooms overview</h2>
+<img src="images/room-view.png">
+
+*****
+
+<h2>Room schedule details</h2>
+<img src="images/room-schedule-view.png">
+
+*****
+
+<h2>Recurring appointments dashboard</h2>
+<img src="images/recurring-view.png">
+
+### Core functions (Reservations and Approvals)
+<h2>Reserving a room</h2>
+<img src="images/room-reservation-example.gif">
+
+<h2>Appriving a reservation</h2>
+<img src="images/reservation-approval-example.gif">
 
 ## Deployment
 
@@ -69,18 +115,6 @@ python app.py
 - 🔁 **Recurring Series**: Create and retire weekly patterns with automatic conflict detection
 - 🎨 **Modern UI**: Sage green theme with intuitive navigation
 - ⏰ **Time Range Display**: Shows full reservation time ranges in 12-hour format
-
-## Technology Stack
-
-- **Backend**: Python Flask 3.0.3
-- **Database**: SQLite (file-based, persisted in Azure /home directory)
-- **Frontend**: HTML5, CSS3, JavaScript ES6, Bootstrap 5
-- **Icons**: Font Awesome
-- **Authentication**: Bcrypt 4.2.1 password hashing with secure sessions
-- **Security**: Environment-based configuration with python-dotenv
-- **Web Server**: Gunicorn (production)
-- **Hosting**: Azure App Service (Linux, Python 3.12 runtime)
-- **CI/CD**: GitHub Actions
 
 ## Deployment Architecture
 
@@ -563,6 +597,14 @@ building-rez/
 ├── AZURE_MIGRATION_SUMMARY.md      # Migration details and benefits
 ├── AZURE_QUICK_REFERENCE.md        # Quick command reference
 ├── building_rez.db                 # SQLite database (created on first run, local only)
+├── images/
+│   ├── building-view.png
+│   ├── dashboard-view.png
+│   ├── recurring-view.png
+│   ├── reservation-approval-example.gif
+│   ├── room-reservation-example.gif
+│   ├── room-schedule-view.png
+│   ├── room-view.png
 ├── static/
 │   ├── css/
 │   │   └── style.css               # Custom styles (sage green theme)
@@ -578,6 +620,7 @@ building-rez/
         ├── buildings.html          # Building list
         ├── rooms.html              # Room list
         └── room_schedule.html      # Room schedule calendar
+
 ```
 
 ## Deployment Files
@@ -585,17 +628,6 @@ building-rez/
 - **`.github/workflows/azure-deploy.yml`**: Automated deployment pipeline (Oryx build enabled)
 - **`.deployment`**: Azure build configuration marker for App Service
 
-## UI Theme
-
-The application uses a custom sage green theme:
-
-- **Primary Color**: Sage green (#8b9f6d)
-- **Navigation Links**: Light sage (#e8f0dc)
-- **Pending Badge**: Vibrant orange (#ff6b35)
-- **Approved Badge**: Success green (Bootstrap default)
-- **Rejected Badge**: Danger red (Bootstrap default)
-
-Theme is defined in `static/css/style.css` and can be customized.
 
 ## Recurring Reservations & Rolling Calendar
 
